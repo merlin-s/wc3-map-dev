@@ -1,8 +1,16 @@
 {
-  "name": "wc3-ts-template",
-  "version": "1.0.0",
+  "name": "wc3-map-dev",
+  "version": "0.1.0",
   "description": "",
-  "author": "TriggerHappy",
+  "contributors": [
+    {
+      "name": "TriggerHappy"
+    },
+    {
+      "name": "merlin-s"
+    }
+  ],
+  "repository": {},
   "license": "MIT",
   "main": "src/main.ts",
   "scripts": {
