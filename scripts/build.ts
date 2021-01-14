@@ -1,8 +1,7 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import War3Map from "mdx-m3-viewer/src/parsers/w3x/map";
-import War3MapW3i from "mdx-m3-viewer/src/parsers/w3x/w3i";
-import { compileMap, getFilesInDirectory, loadJsonFile, logger, toArrayBuffer, IProjectConfig, toBuffer } from "./utils";
+import { compileMap, getFilesInDirectory, loadJsonFile, logger, toArrayBuffer, IProjectConfig, setMapName } from "./utils";
 
 function main() {
   const config: IProjectConfig = loadJsonFile("config.json");
@@ -30,23 +29,20 @@ function main() {
  * @param output The output filename
  * @param dir The directory to create the archive from
  */
-export function createMapFromDir(output: string, dir: string, config: IProjectConfig) {
+export function createMapFromDir(output: string, mapDir: string, config: IProjectConfig) {
   const map = new War3Map();
-  const files = getFilesInDirectory(dir);
+  const files = getFilesInDirectory(mapDir);
 
-  const fullMapName = `${config.mapName} v${config.version}`;
-  map.name = fullMapName;
-
-  updateNameInW3i(
-    files.find(filename => filename.indexOf(".w3i") >= 0), 
-    map.name
+  map.name = setMapName(
+    path.join(mapDir, 'war3map.w3i'),
+    config
   );
 
   map.archive.resizeHashtable(files.length);
 
   for (const fileName of files) {
     const contents = toArrayBuffer(fs.readFileSync(fileName));
-    const archivePath = path.relative(dir, fileName);
+    const archivePath = path.relative(mapDir, fileName);
     const imported = map.import(archivePath, contents);
 
     if (!imported) {
@@ -65,27 +61,6 @@ export function createMapFromDir(output: string, dir: string, config: IProjectCo
   fs.writeFileSync(output, new Uint8Array(result));
 
   logger.info("Finished!");
-}
-
-
-function updateNameInW3i(w3iFilePath: string, mapName: string) {
-  logger.info("Updating name");
-  if (!w3iFilePath) throw Error("w3i not found");
-
-  const buffer = fs.readFileSync(w3iFilePath);
-  if (!buffer) throw Error("reading w3i file failed");
-
-  let w3iBuffer = toArrayBuffer(buffer);
-
-  const w3i = new War3MapW3i.File(w3iBuffer);
-
-  w3i.name = mapName;
-  w3i.loadingScreenTitle = mapName;
-  w3i.loadingScreenSubtitle = mapName;
-  w3i.loadingScreenText = mapName;
-
-  w3iBuffer = w3i.save();
-  fs.writeFileSync(w3iFilePath, toBuffer(w3iBuffer));
 }
 
 main();

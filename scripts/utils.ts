@@ -2,6 +2,7 @@ import { execSync } from "child_process";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { createLogger, format, transports } from "winston";
+import War3MapW3i from "mdx-m3-viewer/src/parsers/w3x/w3i";
 const { combine, timestamp, printf } = format;
 const luamin = require('luamin');
 
@@ -169,3 +170,25 @@ export const logger = createLogger({
     }),
   ]
 });
+
+export function setMapName(w3iFilePath: string, config: IProjectConfig) {
+  let mapName = `${config.mapName} v${config.version}`;
+  logger.info("Updating name");
+  if (!w3iFilePath) throw Error("w3i not found");
+
+  const buffer = fs.readFileSync(w3iFilePath);
+  if (!buffer) throw Error("reading w3i file failed");
+
+  let w3iBuffer = toArrayBuffer(buffer);
+
+  const w3i = new War3MapW3i.File(w3iBuffer);
+
+  w3i.name = mapName;
+  w3i.loadingScreenTitle = mapName;
+  w3i.loadingScreenSubtitle = mapName;
+  w3i.loadingScreenText = mapName;
+
+  w3iBuffer = w3i.save();
+  fs.writeFileSync(w3iFilePath, toBuffer(w3iBuffer));
+  return mapName
+}
