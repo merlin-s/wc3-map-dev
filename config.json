@@ -1,5 +1,5 @@
 {
-  "mapFolder": "map.w3x",
+  "mapFolder": "ff.w3x",
   "minifyScript": false,
   "gameExecutable": "C:\\Games\\Warcraft III\\_retail_\\x86_64\\Warcraft III.exe",
   "outputFolder": "./dist/bin",
@@ -7,5 +7,7 @@
     "-launch",
     "-windowmode",
     "windowed"
-  ]
+  ],
+  "mapName": "FF",
+  "version": "0.1"
 }

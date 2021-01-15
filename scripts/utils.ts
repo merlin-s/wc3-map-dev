@@ -7,6 +7,8 @@ const { combine, timestamp, printf } = format;
 const luamin = require('luamin');
 
 export interface IProjectConfig {
+  mapName: string;
+  version: string;
   mapFolder: string;
   minifyScript: string;
   gameExecutable: string;
@@ -14,6 +16,7 @@ export interface IProjectConfig {
   launchArgs: string[];
   winePath?: string;
   winePrefix?: string;
+
 }
 
 /**

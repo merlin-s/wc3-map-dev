@@ -1,0 +1,1 @@
+export const maxPlayerCount: number = 12;
