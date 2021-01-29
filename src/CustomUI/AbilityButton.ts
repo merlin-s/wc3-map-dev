@@ -7,16 +7,17 @@ import { ToolTipFrame } from "./ToolTipFrame";
 import { StatusBarData } from "./StatusBarData";
 import { Icon } from "Common/Icon";
 
-export class AbilityButton extends Button {
+export class IconButton extends Button {
   static readonly frameType = "GLUEBUTTON";
   static readonly inherits = "IconButtonTemplate";
-  static readonly abilityIconFrameType = "MyAbilityIconBar";
-  static readonly abilityIconFrameDisabled = "MyAbilityIconBarBackground";
-  static readonly abilityIconFrameText = "MyAbilityIconBarText";
+  static readonly iconFrameType = "MyAbilityIconBar";
+  static readonly iconFrameDisabled = "MyAbilityIconBarBackground";
+  static readonly iconFrameText = "MyAbilityIconBarText";
   static readonly tooltipSize = new Vector2D(0.207, 0.05);
 	
 
-  public abilityIconFrame: StatusBarSimpleFrame;
+  public iconFrame: StatusBarSimpleFrame;
+  public icon: Icon;
   public tooltip: ToolTipFrame;
   
   // a button that contains a statusbar background
@@ -33,17 +34,19 @@ export class AbilityButton extends Button {
   ) {
     super(
       name, 
-      AbilityButton.frameType, 
+      IconButton.frameType, 
       owner, 
-      AbilityButton.inherits, 
+      IconButton.inherits, 
       createContext, 
       size, 
       position, 
       new TextFrameData("", TEXT_JUSTIFY_MIDDLE, TEXT_JUSTIFY_CENTER)
     );
 
-    this.abilityIconFrame = new StatusBarSimpleFrame(
-      AbilityButton.abilityIconFrameType, 
+    this.icon = icon;
+
+    this.iconFrame = new StatusBarSimpleFrame(
+      IconButton.iconFrameType, 
       this.frameHandle, 
       createContext, 
       size,
@@ -55,7 +58,7 @@ export class AbilityButton extends Button {
       name + "ToolTip",
       this.frameHandle,
       createContext,
-      AbilityButton.tooltipSize,
+      IconButton.tooltipSize,
       new FramePosition(
         FRAMEPOINT_BOTTOMRIGHT, 
         BlzGetOriginFrame(ORIGIN_FRAME_GAME_UI,0),
@@ -68,33 +71,29 @@ export class AbilityButton extends Button {
     );
 
     this.
-      setAbilityIcon(icon).
-      setAbilityIconToTarget(this.frameHandle).
+      setIcon(icon).
+      setIconToTarget(this.frameHandle).
       setTooltip(this.tooltip.frameHandle);
   }
 
-  public setAbilityIcon(icon: Icon): this {
-    return this.setAbilityIconEnabled(icon).setAbilityIconDisabled(icon);
+  public setIcon(icon: Icon): this {
+    return this.setEnabled(true);
   }
 
-  public setAbilityIconEnabled(icon: Icon): this {
-    BlzFrameSetTexture(this.abilityIconFrame.frameHandle, icon.enabled, 0, true);
+  public setIconEnabled(icon: Icon): this {
+    BlzFrameSetTexture(this.iconFrame.frameHandle, icon.enabled, 0, true);
     return this;
   }
 
-  public setAbilityIconDisabled(icon: Icon): this {
-    BlzFrameSetTexture(
-      BlzGetFrameByName(AbilityButton.abilityIconFrameDisabled, this.createContext), 
-      icon.disabled, 
-      0, 
-      true
-    );
+  public setEnabled(enabled: boolean): this {
+    let texture = enabled ? this.icon.enabled : this.icon.disabled;
+    BlzFrameSetTexture(this.iconFrame.frameHandle, texture, 0, true);
     return this;
   }
 
-  public setAbilityIconToTarget(target: framehandle): this {
-    BlzFrameClearAllPoints(this.abilityIconFrame.frameHandle);
-    BlzFrameSetAllPoints(this.abilityIconFrame.frameHandle, target);
+  public setIconToTarget(target: framehandle): this {
+    BlzFrameClearAllPoints(this.iconFrame.frameHandle);
+    BlzFrameSetAllPoints(this.iconFrame.frameHandle, target);
     return this;
   }
 

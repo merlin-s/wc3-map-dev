@@ -4,9 +4,13 @@ export class Icon implements Serializable<Icon> {
 
   constructor(
     public enabled: string = Icon.defaultEnabled, 
-    public disabled: string = Icon.defaultDisabled,
+    public disabled?: string,
   ) {
-
+      this.disabled = disabled ? disabled : 
+        enabled.replace(
+          "CommandButtons\\BTN", 
+          "CommandButtonsDisabled\\DISBTN"
+        );
   }
 
   deserialize(
