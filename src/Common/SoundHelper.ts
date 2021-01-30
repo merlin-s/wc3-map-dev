@@ -1,5 +1,6 @@
 import { Id } from "./Constants"
 
+let udg_TempSound: sound;
 export module SoundHelper {
   export function playSoundOnUnit(target: unit, soundFile: string, duration: number) {
     udg_TempSound = CreateSound(soundFile, false, true, false, 1, 1, "SpellsEAX")
